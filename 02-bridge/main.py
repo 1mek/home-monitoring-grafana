@@ -15,14 +15,16 @@ from influxdb import InfluxDBClient
 INFLUXDB_ADDRESS = 'influxdb'
 INFLUXDB_USER = 'root'
 INFLUXDB_PASSWORD = 'root'
-INFLUXDB_DATABASE = 'home_db'
+INFLUXDB_DATABASE = 'mdn_db'
 
 MQTT_ADDRESS = 'mosquitto'
 MQTT_USER = 'mqttuser'
 MQTT_PASSWORD = 'mqttpassword'
-MQTT_TOPIC = 'home/+/+'  # [bme280|mijia]/[temperature|humidity|battery|status]
-MQTT_REGEX = 'home/([^/]+)/([^/]+)'
-MQTT_CLIENT_ID = 'MQTTInfluxDBBridge'
+MQTT_TOPIC = 'i/+/+'  # i/sender/[m] || [battery|status|etc]
+MQTT_REGEX = 'i/([^/]+)/([^/]+)'
+MQTT_CLIENT_ID = 'MQTT2InfluxDB'
+MQTT_MULTI = '([^/]+)/([^/]+)'
+MQTT_SEPARATOR = ';'
 
 influxdb_client = InfluxDBClient(INFLUXDB_ADDRESS, 8086, INFLUXDB_USER, INFLUXDB_PASSWORD, None)
 
@@ -46,7 +48,19 @@ def on_message(client, userdata, msg):
     if sensor_data is not None:
         _send_sensor_data_to_influxdb(sensor_data)
 
+def _parse_mqtt_message_multi(topic, payload):
+    match = re.match(MQTT_REGEX, topic)
+    if match:
+        
+        location = match.group(1)
+        measurement = match.group(2)
+        if measurement == 'status':
+            return None
+        return SensorData(location, measurement, float(payload))
+    else:
+        return None
 
+    
 def _parse_mqtt_message(topic, payload):
     match = re.match(MQTT_REGEX, topic)
     if match:
