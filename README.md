@@ -1,3 +1,12 @@
+#
+1mek mod. 
+mqtt broker - mqttBridge - influxDb,
+grafana.
+
+mqttBridge with MULTI parse.    x/MULTI  (payload A=1;B=2;C=3 etc.)
+
+
+
 # Home sensor data monitoring with MQTT, InfluxDB and Grafana
 
 Blog post: [http://nilhcem.com/iot/home-monitoring-with-mqtt-influxdb-grafana](http://nilhcem.com/iot/home-monitoring-with-mqtt-influxdb-grafana)  
